@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof StartButton> = {
     component: StartButton,
-    title: 'Pomodoro/Buttons/StartButton',
+    title: 'Pomodoro/Components/Buttons/StartButton',
 }
 
 export default meta;

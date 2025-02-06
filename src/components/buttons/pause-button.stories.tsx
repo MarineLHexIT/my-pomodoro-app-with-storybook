@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof PauseButton> = {
     component: PauseButton,
-    title: 'Pomodoro/Buttons/PauseButton',
+    title: 'Pomodoro/Components/Buttons/PauseButton',
 }
 
 export default meta;

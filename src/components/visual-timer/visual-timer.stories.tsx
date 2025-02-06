@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import VisualTimer from './visual-timer.tsx';
 
 const meta = {
-    title: 'Pomodoro/Canvas/VisualTimer',
+    title: 'Pomodoro/Components/Canvas/VisualTimer',
     component: VisualTimer,
 } satisfies Meta<typeof VisualTimer>;
 
