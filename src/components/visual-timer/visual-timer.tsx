@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import colors from 'tailwindcss/colors';
-import { start } from '@storybook/builder-vite';
 
 interface VisualTimerProps {
     currentTime?: number;
