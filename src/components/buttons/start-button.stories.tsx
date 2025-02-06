@@ -1,4 +1,4 @@
-import StartButton from "@/src/components/buttons/start-button.tsx";
+import StartButton from "./start-button.tsx";
 import { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof StartButton> = {

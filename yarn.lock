@@ -485,7 +485,7 @@
     "@storybook/icons" "^1.2.12"
     ts-dedent "^2.0.0"
 
-"@storybook/builder-vite@8.5.3":
+"@storybook/builder-vite@^8.5.3", "@storybook/builder-vite@8.5.3":
   version "8.5.3"
   resolved "https://registry.npmjs.org/@storybook/builder-vite/-/builder-vite-8.5.3.tgz"
   integrity sha512-MxriwzZSVidaXj3kpH/jCOJZUdF7ofcvxmvrMrNehH9UvXIGM6b73CBC5ucnptbnQ7qxYKdAZiMhQbPHZ9cqOQ==
@@ -629,6 +629,11 @@
   version "4.0.3"
   resolved "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.0.3.tgz"
   integrity sha512-Xfc3z/li6XkuD7Hs+Uk6pjyCXnfnd9zuQTKOyDTZJ544xc2yoMKUkuDw6Et9wb31MzU2/c0CIUpTDa71lL9KHw==
+
+"@tailwindcss/oxide-linux-x64-musl@4.0.3":
+  version "4.0.3"
+  resolved "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.0.3.tgz"
+  integrity sha512-ugKVqKzwa/cjmqSQG17aS9DYrEcQ/a5NITcgmOr3JLW4Iz64C37eoDlkC8tIepD3S/Td/ywKAolTQ8fKbjEL4g==
 
 "@tailwindcss/oxide@^4.0.3":
   version "4.0.3"
@@ -1803,6 +1808,11 @@ lightningcss-linux-x64-gnu@1.29.1:
   version "1.29.1"
   resolved "https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.29.1.tgz"
   integrity sha512-u1S+xdODy/eEtjADqirA774y3jLcm8RPtYztwReEXoZKdzgsHYPl0s5V52Tst+GKzqjebkULT86XMSxejzfISw==
+
+lightningcss-linux-x64-musl@1.29.1:
+  version "1.29.1"
+  resolved "https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.29.1.tgz"
+  integrity sha512-L0Tx0DtaNUTzXv0lbGCLB/c/qEADanHbu4QdcNOXLIe1i8i22rZRpbT3gpWYsCh9aSL9zFujY/WmEXIatWvXbw==
 
 lightningcss@^1.21.0, lightningcss@^1.29.1:
   version "1.29.1"
