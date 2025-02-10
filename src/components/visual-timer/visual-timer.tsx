@@ -1,16 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import colors from 'tailwindcss/colors';
 
 interface VisualTimerProps {
-    currentTime?: number;
+    initialTime: number;
+    isPaused?: boolean;
 }
 
-const MAX_TIMER = 60 * 60; // 1h en secondes
+const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 
-export default function VisualTimer({ currentTime = 25*60 }: VisualTimerProps) {
+export default function VisualTimer({ initialTime = 25 * 60 * 1000, isPaused = false }: VisualTimerProps) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const requestRef = useRef<number>();
+    const previousTimerRef = useRef<number>();
     const theme = colors.amber;
+
+    const [currentTimer, setCurrentTimer] = useState<number>(initialTime);
 
     /**
      * Draw the clock, should be done once at first render
@@ -41,7 +46,7 @@ export default function VisualTimer({ currentTime = 25*60 }: VisualTimerProps) {
         // add markers
         for ( let i = 0; i < 60; i += 1 ) {
 
-            const iAngle = (i * 60 / MAX_TIMER) * (2 * Math.PI) + startAngle;
+            const iAngle = (i * 60 * 1000 / MAX_TIMER) * (2 * Math.PI) + startAngle;
             const length = i % 5 === 0 ? 4 : 2;
             const width = i % 5 === 0 ? 4 : 2;
 
@@ -96,7 +101,8 @@ export default function VisualTimer({ currentTime = 25*60 }: VisualTimerProps) {
         ctx.fill();
     };
 
-    useEffect(() => {
+
+    const drawCanvas = (time: number = initialTime) => {
 
         const canvas = canvasRef.current;
 
@@ -114,12 +120,39 @@ export default function VisualTimer({ currentTime = 25*60 }: VisualTimerProps) {
 
         const [centerX, centerY] = [canvas.width / 2, canvas.height / 2];
         const radius = canvas.width / 2 - 30;
-        const angle = (currentTime / MAX_TIMER) * (2 * Math.PI); // 360 degrés;
+        const angle = (time / MAX_TIMER) * (2 * Math.PI); // 360 degrés;
 
         drawAngle(ctx, centerX, centerY, radius, angle);
         drawClock(ctx, centerX, centerY, radius);
+    };
 
-    }, [currentTime]);
+    const animate = (nowTime: number) => {
+
+        if ( previousTimerRef.current === undefined ) {
+            previousTimerRef.current = performance.now();
+        }
+        const deltaTime = nowTime - previousTimerRef.current;
+        previousTimerRef.current = performance.now();
+
+        setCurrentTimer((prev) => prev - deltaTime);
+        drawCanvas(currentTimer);
+
+        requestRef.current = requestAnimationFrame(animate);
+    };
+
+
+    useEffect(() => {
+
+        previousTimerRef.current = performance.now();
+        requestRef.current = requestAnimationFrame(animate);
+
+        return () => {
+            // destroy
+            if ( requestRef.current ) {
+                cancelAnimationFrame(requestRef.current);
+            }
+        };
+    }, [initialTime]);
 
     return <canvas ref={ canvasRef } width={ 500 } height={ 500 }/>;
 }
