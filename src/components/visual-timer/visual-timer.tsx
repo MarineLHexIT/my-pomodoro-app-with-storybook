@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import colors from 'tailwindcss/colors';
 
 interface VisualTimerProps {
     initialTime: number; // Initial Time in MINUTES
     isPaused?: boolean;
+    // theme?: Omit<keyof typeof colors, 'inherit' | 'current' | 'transparent' | 'black' | 'white'>; // todo
 }
 
 const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
@@ -12,10 +13,11 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
-    const initialTimeRef = useRef<number>();
+    const previousTimeRef = useRef<number>();
+    const remainingTimeRef = useRef<number>();
     const theme = colors.amber;
 
-    const [initialTimeInMs, setInitialTimeInMs] = useState<number>(initialTime * 60 * 1000);
+    const initialTimeInMs = initialTime * 60 * 1000;
 
     const drawTimer = (
         ctx: CanvasRenderingContext2D,
@@ -123,8 +125,6 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
 
     const drawCanvas = (time: number) => {
 
-        console.log('drawCanvas', time);
-
         const canvas = canvasRef.current;
 
         if ( canvas === null ) {
@@ -148,16 +148,27 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
         drawTimer(ctx, centerX, centerY, time);
     };
 
-    const animate = (nowTime: number) => {
+    const animate = () => {
 
-        if ( initialTimeRef.current === undefined ) {
-            initialTimeRef.current = performance.now();
+        const now = performance.now();
+
+        if (isPaused) {
+            return;
         }
-        const deltaTime = nowTime - initialTimeRef.current; // Delta Time in MS
 
-        drawCanvas(initialTimeInMs - deltaTime);
+        if ( previousTimeRef.current === undefined ) {
+            previousTimeRef.current = now;
+        }
 
-        requestRef.current = requestAnimationFrame(animate);
+        const deltaTime = now - previousTimeRef.current; // Delta Time in MS
+        remainingTimeRef.current = Math.max(0, remainingTimeRef.current! - deltaTime);
+        previousTimeRef.current = now;
+
+        drawCanvas(remainingTimeRef.current);
+
+        if (remainingTimeRef.current! > 0) {
+            requestRef.current = requestAnimationFrame(animate);
+        }
     };
 
 
@@ -167,7 +178,9 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
         drawCanvas(initialTimeInMs);
 
         // init refs
-        initialTimeRef.current = performance.now();
+        previousTimeRef.current = performance.now();
+        remainingTimeRef.current = initialTimeInMs;
+
         // start animate
         if ( !isPaused ) {
             requestRef.current = requestAnimationFrame(animate);
@@ -189,7 +202,14 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
                 cancelAnimationFrame(requestRef.current);
             }
         } else {
+            previousTimeRef.current = performance.now();
             requestRef.current = requestAnimationFrame(animate);
+        }
+
+        return () => {
+            if (requestRef.current) {
+                cancelAnimationFrame(requestRef.current);
+            }
         }
     }, [isPaused])
 
