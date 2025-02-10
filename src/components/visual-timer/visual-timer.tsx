@@ -2,20 +2,39 @@ import { useEffect, useRef, useState } from 'react';
 import colors from 'tailwindcss/colors';
 
 interface VisualTimerProps {
-    initialTime: number;
+    initialTime: number; // Initial Time in MINUTES
     isPaused?: boolean;
 }
 
 const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 
-export default function VisualTimer({ initialTime = 25 * 60 * 1000, isPaused = false }: VisualTimerProps) {
+export default function VisualTimer({ initialTime = 25, isPaused = false }: VisualTimerProps) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
     const previousTimerRef = useRef<number>();
     const theme = colors.amber;
 
-    const [currentTimer, setCurrentTimer] = useState<number>(initialTime);
+    const [currentTimer, setCurrentTimer] = useState<number>(initialTime * 60 * 1000);
+
+    const drawTimer = (
+        ctx: CanvasRenderingContext2D,
+        centerX: number,
+        centerY: number,
+        time: number
+    ) => {
+        ctx.font = '18px Arial';
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const timeInSeconds = time / 1000; // time in seconds
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = Math.floor(timeInSeconds % 60).toString().padStart(2, '0');
+
+        ctx.fillText(`${ minutes } : ${ seconds }`, centerX, centerY);
+    };
+
 
     /**
      * Draw the clock, should be done once at first render
@@ -102,7 +121,7 @@ export default function VisualTimer({ initialTime = 25 * 60 * 1000, isPaused = f
     };
 
 
-    const drawCanvas = (time: number = initialTime) => {
+    const drawCanvas = (time: number) => {
 
         const canvas = canvasRef.current;
 
@@ -124,6 +143,7 @@ export default function VisualTimer({ initialTime = 25 * 60 * 1000, isPaused = f
 
         drawAngle(ctx, centerX, centerY, radius, angle);
         drawClock(ctx, centerX, centerY, radius);
+        drawTimer(ctx, centerX, centerY, time);
     };
 
     const animate = (nowTime: number) => {
@@ -131,7 +151,8 @@ export default function VisualTimer({ initialTime = 25 * 60 * 1000, isPaused = f
         if ( previousTimerRef.current === undefined ) {
             previousTimerRef.current = performance.now();
         }
-        const deltaTime = nowTime - previousTimerRef.current;
+        const deltaTime = nowTime - previousTimerRef.current; // Delta Time in MS
+
         previousTimerRef.current = performance.now();
 
         setCurrentTimer((prev) => prev - deltaTime);
@@ -153,6 +174,10 @@ export default function VisualTimer({ initialTime = 25 * 60 * 1000, isPaused = f
             }
         };
     }, [initialTime]);
+
+    useEffect(() => {
+        console.log('currentTimer', currentTimer);
+    }, [currentTimer]);
 
     return <canvas ref={ canvasRef } width={ 500 } height={ 500 }/>;
 }
