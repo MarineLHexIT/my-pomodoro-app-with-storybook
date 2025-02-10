@@ -12,10 +12,10 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
-    const previousTimerRef = useRef<number>();
+    const initialTimeRef = useRef<number>();
     const theme = colors.amber;
 
-    const [currentTimer, setCurrentTimer] = useState<number>(initialTime * 60 * 1000);
+    const [initialTimeInMs, setInitialTimeInMs] = useState<number>(initialTime * 60 * 1000);
 
     const drawTimer = (
         ctx: CanvasRenderingContext2D,
@@ -123,6 +123,8 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
 
     const drawCanvas = (time: number) => {
 
+        console.log('drawCanvas', time);
+
         const canvas = canvasRef.current;
 
         if ( canvas === null ) {
@@ -148,15 +150,12 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
 
     const animate = (nowTime: number) => {
 
-        if ( previousTimerRef.current === undefined ) {
-            previousTimerRef.current = performance.now();
+        if ( initialTimeRef.current === undefined ) {
+            initialTimeRef.current = performance.now();
         }
-        const deltaTime = nowTime - previousTimerRef.current; // Delta Time in MS
+        const deltaTime = nowTime - initialTimeRef.current; // Delta Time in MS
 
-        previousTimerRef.current = performance.now();
-
-        setCurrentTimer((prev) => prev - deltaTime);
-        drawCanvas(currentTimer);
+        drawCanvas(initialTimeInMs - deltaTime);
 
         requestRef.current = requestAnimationFrame(animate);
     };
@@ -164,8 +163,15 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
 
     useEffect(() => {
 
-        previousTimerRef.current = performance.now();
-        requestRef.current = requestAnimationFrame(animate);
+        // Initial Drawing
+        drawCanvas(initialTimeInMs);
+
+        // init refs
+        initialTimeRef.current = performance.now();
+        // start animate
+        if ( !isPaused ) {
+            requestRef.current = requestAnimationFrame(animate);
+        }
 
         return () => {
             // destroy
@@ -176,8 +182,16 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
     }, [initialTime]);
 
     useEffect(() => {
-        console.log('currentTimer', currentTimer);
-    }, [currentTimer]);
+
+        // Todo : reinit refs
+        if ( isPaused ) {
+            if ( requestRef.current ) {
+                cancelAnimationFrame(requestRef.current);
+            }
+        } else {
+            requestRef.current = requestAnimationFrame(animate);
+        }
+    }, [isPaused])
 
     return <canvas ref={ canvasRef } width={ 500 } height={ 500 }/>;
 }
