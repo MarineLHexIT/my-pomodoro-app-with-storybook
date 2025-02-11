@@ -9,19 +9,19 @@ type PomodoroStoreState = {
 };
 
 type PomodoroStoreAction = {
-    setState: (state: PomodoroState) => void,
+    setCurrentState: (state: PomodoroState) => void,
     togglePause: () => void,
     setElapsedTime: (time: number) => void,
 }
 
-const useStore = create<PomodoroStoreState & PomodoroStoreAction>((set) => ({
+const usePomodoroStore = create<PomodoroStoreState & PomodoroStoreAction>((set) => ({
     currentState: 'work',
     isPaused: false,
     elapsedTime: 0,
-    setState: (newState: PomodoroState) => set(() => ({ currentState: newState })),
+    setCurrentState: (newState: PomodoroState) => set(() => ({ currentState: newState })),
     togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
     setElapsedTime: (time: number) => set(() => ({ elapsedTime: time })),
 }));
 
 
-export default useStore;
+export default usePomodoroStore;
