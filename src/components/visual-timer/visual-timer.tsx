@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import colors from 'tailwindcss/colors';
+import usePomodoroStore from '@/stores/pomodoro-store.ts';
 
 type ExtractColorNames<T> = {
     [K in keyof T]: T[K] extends Record<string, string> ? K : never;
@@ -9,7 +10,6 @@ export type DisplayTheme = ExtractColorNames<typeof colors>;
 
 interface VisualTimerProps {
     initialTime: number; // Initial Time in MINUTES
-    isPaused?: boolean;
     displayTheme?: DisplayTheme;
 }
 
@@ -18,7 +18,6 @@ const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 export default function VisualTimer(
     {
         initialTime = 25,
-        isPaused = false,
         displayTheme = 'amber'
     }: VisualTimerProps
 ) {
@@ -27,6 +26,8 @@ export default function VisualTimer(
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
     const remainingTimeRef = useRef<number>();
+
+    const { isPaused, setElapsedTime } = usePomodoroStore.getState();
 
     const [width, setWidth] = useState<number>();
 
@@ -178,6 +179,7 @@ export default function VisualTimer(
         remainingTimeRef.current = Math.max(0, remainingTimeRef.current! - deltaTime);
         previousTimeRef.current = now;
 
+        setElapsedTime(initialTimeInMs - remainingTimeRef.current!);
         drawCanvas(remainingTimeRef.current);
 
         if (remainingTimeRef.current! > 0) {
