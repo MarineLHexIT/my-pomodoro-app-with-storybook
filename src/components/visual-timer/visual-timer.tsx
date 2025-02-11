@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import colors from 'tailwindcss/colors';
 
 type ExtractColorNames<T> = {
@@ -15,12 +15,20 @@ interface VisualTimerProps {
 
 const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 
-export default function VisualTimer({ initialTime = 25, isPaused = false, displayTheme = "amber" }: VisualTimerProps) {
+export default function VisualTimer(
+    {
+        initialTime = 25,
+        isPaused = false,
+        displayTheme = 'amber'
+    }: VisualTimerProps
+) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
     const remainingTimeRef = useRef<number>();
+
+    const [width, setWidth] = useState<number>();
 
     const theme = colors[displayTheme];
 
@@ -180,6 +188,12 @@ export default function VisualTimer({ initialTime = 25, isPaused = false, displa
 
     useEffect(() => {
 
+        // get width / height of the parent
+        if (canvasRef.current) {
+            const rect = canvasRef.current.parentElement?.getBoundingClientRect();
+            setWidth(Math.min(rect!.width, rect!.height));
+        }
+
         // Initial Drawing
         drawCanvas(initialTimeInMs);
 
@@ -202,7 +216,6 @@ export default function VisualTimer({ initialTime = 25, isPaused = false, displa
 
     useEffect(() => {
 
-        // Todo : reinit refs
         if ( isPaused ) {
             if ( requestRef.current ) {
                 cancelAnimationFrame(requestRef.current);
@@ -219,5 +232,5 @@ export default function VisualTimer({ initialTime = 25, isPaused = false, displa
         }
     }, [isPaused])
 
-    return <canvas ref={ canvasRef } width={ 500 } height={ 500 }/>;
+    return <canvas ref={ canvasRef } width={ width } height={ width }/>;
 }

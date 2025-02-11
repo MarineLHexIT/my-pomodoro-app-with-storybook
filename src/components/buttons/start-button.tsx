@@ -1,6 +1,6 @@
-import Button from './button';
 import { clsx } from 'clsx';
 import { PlayIcon } from '@heroicons/react/24/solid';
+import Button from '@/components/buttons/button.tsx';
 
 interface StartButtonProps {
     disabled?: boolean,

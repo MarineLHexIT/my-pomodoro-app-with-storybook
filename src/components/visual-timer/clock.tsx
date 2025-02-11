@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
-import VisualTimer from './visual-timer.tsx';
+import { useState } from 'react';
+import VisualTimer from '@/components/visual-timer/visual-timer.tsx';
+import StartButton from '@/components/buttons/start-button.tsx';
+import PauseButton from '@/components/buttons/pause-button.tsx';
 
 interface ClockProps {
     durationInMinutes: number;
@@ -7,25 +9,24 @@ interface ClockProps {
 
 export default function Clock({ durationInMinutes }: ClockProps) {
 
-    const [currentTime, setCurrentTime] = useState<number>(durationInMinutes);
-
-    useEffect(() => {
-        const intervalID = setInterval(() => {
-            setCurrentTime((prev) => prev - 1);
-
-            console.log(currentTime);
-
-            if ( currentTime === 0 ) {
-                clearInterval(intervalID);
-            }
-
-        }, 1000);
-    }, [durationInMinutes]);
+    const [isPaused, setIsPaused] = useState<boolean>(false);
 
     return (
-        <div>
-            <VisualTimer initialTime={ durationInMinutes } isPaused={ false }/>
-            <span>{ currentTime }</span>
+        <div className="grid w-[500px] h-[500px] place-items-center">
+            <div className="col-start-1 row-start-1 w-full h-full">
+                <VisualTimer
+                    initialTime={ durationInMinutes }
+                    isPaused={ isPaused }
+                />
+            </div>
+            <div className="col-start-1 row-start-1">
+                {
+                    isPaused && <StartButton onClick={ () => setIsPaused(false) }/>
+                }
+                {
+                    !isPaused && <PauseButton onClick={ () => setIsPaused(true) }/>
+                }
+            </div>
         </div>
     );
 }

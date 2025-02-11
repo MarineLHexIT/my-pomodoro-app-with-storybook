@@ -1,13 +1,13 @@
-import Button from './button';
 import { clsx } from 'clsx';
 import { PauseIcon } from '@heroicons/react/24/solid';
+import Button from '@/components/buttons/button.tsx';
 
-interface StartButtonProps {
+interface PauseButtonProps {
     disabled?: boolean,
     onClick?: () => void
 }
 
-export default function StartButton({ onClick, disabled = false }: StartButtonProps) {
+export default function PauseButton({ onClick, disabled = false }: PauseButtonProps) {
 
     return <Button onClick={ onClick } disabled={ disabled }>
         <PauseIcon className={ clsx('size-6') }/>
