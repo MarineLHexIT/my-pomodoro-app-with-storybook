@@ -1,5 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
-import VisualTimer from './visual-timer.tsx';
+import VisualTimer, { DisplayTheme } from './visual-timer.tsx';
+
+import colors from 'tailwindcss/colors';
+
+const colorOptions: DisplayTheme[] = Object
+    .keys(colors)
+    .filter((key): key is DisplayTheme => typeof colors[key as keyof typeof colors] === 'object');
 
 const meta = {
     title: 'Pomodoro/Components/Canvas/VisualTimer',
@@ -9,6 +15,9 @@ const meta = {
             type: 'number',
             description: 'Initial Time, in minutes, must be between 0 and 60 minutes',
         },
+        displayTheme: {
+            options: colorOptions
+        }
     }
 } satisfies Meta<typeof VisualTimer>;
 
@@ -29,5 +38,12 @@ export const Paused: Story = {
     args: {
         ...Default.args,
         isPaused: true
+    }
+};
+
+export const BlueClock: Story = {
+    args: {
+        ...Default.args,
+        displayTheme: 'sky'
     }
 };

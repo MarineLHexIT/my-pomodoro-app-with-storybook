@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import VisualTimer from './visual-timer.tsx';
 
 interface ClockProps {
-    duration: number;
+    durationInMinutes: number;
 }
 
-export default function Clock({ duration }: ClockProps) {
+export default function Clock({ durationInMinutes }: ClockProps) {
 
-    const [currentTime, setCurrentTime] = useState<number>(duration);
+    const [currentTime, setCurrentTime] = useState<number>(durationInMinutes);
 
     useEffect(() => {
         const intervalID = setInterval(() => {
@@ -20,11 +20,11 @@ export default function Clock({ duration }: ClockProps) {
             }
 
         }, 1000);
-    }, [duration]);
+    }, [durationInMinutes]);
 
     return (
         <div>
-            <VisualTimer currentTime={ currentTime }/>
+            <VisualTimer initialTime={ durationInMinutes } isPaused={ false }/>
             <span>{ currentTime }</span>
         </div>
     );

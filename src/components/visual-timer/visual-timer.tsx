@@ -1,21 +1,28 @@
 import { useEffect, useRef } from 'react';
 import colors from 'tailwindcss/colors';
 
+type ExtractColorNames<T> = {
+    [K in keyof T]: T[K] extends Record<string, string> ? K : never;
+}[keyof T];
+
+export type DisplayTheme = ExtractColorNames<typeof colors>;
+
 interface VisualTimerProps {
     initialTime: number; // Initial Time in MINUTES
     isPaused?: boolean;
-    // theme?: Omit<keyof typeof colors, 'inherit' | 'current' | 'transparent' | 'black' | 'white'>; // todo
+    displayTheme?: DisplayTheme;
 }
 
 const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 
-export default function VisualTimer({ initialTime = 25, isPaused = false }: VisualTimerProps) {
+export default function VisualTimer({ initialTime = 25, isPaused = false, displayTheme = "amber" }: VisualTimerProps) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
     const remainingTimeRef = useRef<number>();
-    const theme = colors.amber;
+
+    const theme = colors[displayTheme];
 
     const initialTimeInMs = initialTime * 60 * 1000;
 
@@ -36,7 +43,6 @@ export default function VisualTimer({ initialTime = 25, isPaused = false }: Visu
 
         ctx.fillText(`${ minutes } : ${ seconds }`, centerX, centerY);
     };
-
 
     /**
      * Draw the clock, should be done once at first render

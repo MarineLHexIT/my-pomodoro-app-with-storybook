@@ -13,13 +13,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
     name: 'Work Clock',
     args: {
-        duration: 25*60
+        durationInMinutes: 25
     }
 };
 
 export const BreakClock: Story = {
     args: {
         ...Default.args,
-        duration: 5*60
+        durationInMinutes: 5
     }
 }
