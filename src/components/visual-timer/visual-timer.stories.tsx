@@ -18,7 +18,14 @@ const meta = {
         displayTheme: {
             options: colorOptions
         }
-    }
+    },
+    decorators: [
+        (Story) => (
+            <div className="w-[500px] h-[500px]">
+                <Story />
+            </div>
+        )
+    ]
 } satisfies Meta<typeof VisualTimer>;
 
 export default meta;

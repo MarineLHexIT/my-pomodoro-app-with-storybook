@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import colors from 'tailwindcss/colors';
 import usePomodoroStore from '@/stores/pomodoro-store.ts';
 
@@ -11,6 +11,7 @@ export type DisplayTheme = ExtractColorNames<typeof colors>;
 interface VisualTimerProps {
     initialTime: number; // Initial Time in MINUTES
     displayTheme?: DisplayTheme;
+    isPaused?: boolean;
 }
 
 const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
@@ -18,7 +19,8 @@ const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 export default function VisualTimer(
     {
         initialTime = 25,
-        displayTheme = 'amber'
+        displayTheme = 'amber',
+        isPaused = false,
     }: VisualTimerProps
 ) {
 
@@ -26,14 +28,17 @@ export default function VisualTimer(
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
     const remainingTimeRef = useRef<number>();
+    const width = useRef<number>(500);
 
-    const { isPaused, setElapsedTime } = usePomodoroStore.getState();
-
-    const [width, setWidth] = useState<number>();
+    const { setElapsedTime } = usePomodoroStore();
 
     const theme = colors[displayTheme];
 
     const initialTimeInMs = initialTime * 60 * 1000;
+    if ( canvasRef.current ) {
+        const rect = canvasRef.current.parentElement?.getBoundingClientRect();
+        width.current = Math.min(rect!.width, rect!.height);
+    }
 
     const drawTimer = (
         ctx: CanvasRenderingContext2D,
@@ -167,10 +172,6 @@ export default function VisualTimer(
 
         const now = performance.now();
 
-        if (isPaused) {
-            return;
-        }
-
         if ( previousTimeRef.current === undefined ) {
             previousTimeRef.current = now;
         }
@@ -182,28 +183,20 @@ export default function VisualTimer(
         setElapsedTime(initialTimeInMs - remainingTimeRef.current!);
         drawCanvas(remainingTimeRef.current);
 
-        if (remainingTimeRef.current! > 0) {
+        if ( !isPaused && remainingTimeRef.current! > 0 ) {
             requestRef.current = requestAnimationFrame(animate);
         }
     };
 
-
     useEffect(() => {
-
-        // get width / height of the parent
-        if (canvasRef.current) {
-            const rect = canvasRef.current.parentElement?.getBoundingClientRect();
-            setWidth(Math.min(rect!.width, rect!.height));
-        }
-
-        // Initial Drawing
-        drawCanvas(initialTimeInMs);
 
         // init refs
         previousTimeRef.current = performance.now();
         remainingTimeRef.current = initialTimeInMs;
 
-        // start animate
+        // Initial Drawing
+        drawCanvas(initialTimeInMs);
+
         if ( !isPaused ) {
             requestRef.current = requestAnimationFrame(animate);
         }
@@ -234,5 +227,5 @@ export default function VisualTimer(
         }
     }, [isPaused])
 
-    return <canvas ref={ canvasRef } width={ width } height={ width }/>;
+    return <canvas ref={ canvasRef } width={ width.current } height={ width.current } className="w-full h-full"/>;
 }

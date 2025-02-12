@@ -5,6 +5,7 @@ import usePomodoroStore from '@/stores/pomodoro-store';
 
 afterEach(() => {
     usePomodoroStore.setState({
+        initialDuration: 25,
         elapsedTime: 0,
         isPaused: false,
         currentState: 'work'
@@ -17,6 +18,7 @@ describe('Pomodoro Store', () => {
         expect(state.currentState).toBe('work');
         expect(state.isPaused).toBe(false);
         expect(state.elapsedTime).toBe(0);
+        expect(state.initialDuration).toBe(25);
     });
 
     it('should change the current state', () => {

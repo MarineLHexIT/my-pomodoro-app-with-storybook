@@ -16,13 +16,10 @@ interface ClockProps {
 
 export default function Clock({ durationInMinutes }: ClockProps) {
 
-    const { isPaused, togglePause, setElapsedTime } = usePomodoroStore.getState();
+    const { isPaused, togglePause, setElapsedTime } = usePomodoroStore();
 
     useEffect(() => {
         setElapsedTime(0);
-        if ( isPaused ) {
-            togglePause();
-        }
     }, [durationInMinutes]);
 
     return (
@@ -30,6 +27,7 @@ export default function Clock({ durationInMinutes }: ClockProps) {
             <div className="col-start-1 row-start-1 w-full h-full">
                 <VisualTimer
                     initialTime={ durationInMinutes }
+                    isPaused={ isPaused }
                 />
             </div>
             <div className="col-start-1 row-start-1">
