@@ -35,7 +35,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
     name: 'Default',
     args: {
-        initialTime: 25,
+        initialTime: 25*60,
         isPaused: false
     }
 };

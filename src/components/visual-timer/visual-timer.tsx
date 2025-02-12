@@ -9,7 +9,8 @@ type ExtractColorNames<T> = {
 export type DisplayTheme = ExtractColorNames<typeof colors>;
 
 interface VisualTimerProps {
-    initialTime: number; // Initial Time in MINUTES
+    initialTime: number; // Initial Time in SECONDS
+    remainingDuration?: number; // remaining time, in SECONDS
     displayTheme?: DisplayTheme;
     isPaused?: boolean;
 }
@@ -18,7 +19,8 @@ const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 
 export default function VisualTimer(
     {
-        initialTime = 25,
+        initialTime = 25 * 60,
+        remainingDuration,
         displayTheme = 'amber',
         isPaused = false,
     }: VisualTimerProps
@@ -27,14 +29,14 @@ export default function VisualTimer(
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
-    const remainingTimeRef = useRef<number>();
+    const remainingTimeRef = useRef<number>(remainingDuration!);
     const width = useRef<number>(500);
 
-    const { setElapsedTime } = usePomodoroStore();
+    const { setRemainingDuration } = usePomodoroStore();
 
     const theme = colors[displayTheme];
 
-    const initialTimeInMs = initialTime * 60 * 1000;
+    const initialTimeInMs = initialTime * 1000;
     if ( canvasRef.current ) {
         const rect = canvasRef.current.parentElement?.getBoundingClientRect();
         width.current = Math.min(rect!.width, rect!.height);
@@ -180,7 +182,7 @@ export default function VisualTimer(
         remainingTimeRef.current = Math.max(0, remainingTimeRef.current! - deltaTime);
         previousTimeRef.current = now;
 
-        setElapsedTime(initialTimeInMs - remainingTimeRef.current!);
+        setRemainingDuration(remainingTimeRef.current!);
         drawCanvas(remainingTimeRef.current);
 
         if ( !isPaused && remainingTimeRef.current! > 0 ) {
@@ -192,7 +194,7 @@ export default function VisualTimer(
 
         // init refs
         previousTimeRef.current = performance.now();
-        remainingTimeRef.current = initialTimeInMs;
+        remainingTimeRef.current = remainingDuration! * 1000 || initialTimeInMs;
 
         // Initial Drawing
         drawCanvas(initialTimeInMs);
@@ -207,7 +209,7 @@ export default function VisualTimer(
                 cancelAnimationFrame(requestRef.current);
             }
         };
-    }, [initialTime]);
+    }, [initialTime, remainingDuration]);
 
     useEffect(() => {
 

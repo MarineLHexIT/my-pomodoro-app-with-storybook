@@ -6,6 +6,7 @@ import usePomodoroStore from '@/stores/pomodoro-store.ts';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import DigitalTimer from '@/components/digital-timer/digital-timer.tsx';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -16,17 +17,19 @@ interface ClockProps {
 
 export default function Clock({ durationInMinutes }: ClockProps) {
 
-    const { isPaused, togglePause, setElapsedTime } = usePomodoroStore();
+    const { isPaused, togglePause, setRemainingDuration, remainingDuration } = usePomodoroStore();
 
     useEffect(() => {
-        setElapsedTime(0);
+        setRemainingDuration(durationInMinutes * 60);
     }, [durationInMinutes]);
 
     return (
+        <div className="flex flex-col gap-2">
         <div className="grid w-[500px] h-[500px] place-items-center">
             <div className="col-start-1 row-start-1 w-full h-full">
                 <VisualTimer
-                    initialTime={ durationInMinutes }
+                    initialTime={ durationInMinutes * 60 }
+                    remainingDuration={ remainingDuration }
                     isPaused={ isPaused }
                 />
             </div>
@@ -38,6 +41,8 @@ export default function Clock({ durationInMinutes }: ClockProps) {
                     !isPaused && <PauseButton onClick={ togglePause }/>
                 }
             </div>
+        </div>
+            <DigitalTimer currentTime={ remainingDuration }/>
         </div>
     );
 }

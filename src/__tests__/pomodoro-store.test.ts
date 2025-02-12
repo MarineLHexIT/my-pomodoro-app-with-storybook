@@ -5,8 +5,8 @@ import usePomodoroStore from '@/stores/pomodoro-store';
 
 afterEach(() => {
     usePomodoroStore.setState({
-        initialDuration: 25,
-        elapsedTime: 0,
+        initialDuration: 25*60,
+        remainingDuration: 25*60,
         isPaused: false,
         currentState: 'work'
     });
@@ -17,8 +17,8 @@ describe('Pomodoro Store', () => {
         const state = usePomodoroStore.getState();
         expect(state.currentState).toBe('work');
         expect(state.isPaused).toBe(false);
-        expect(state.elapsedTime).toBe(0);
-        expect(state.initialDuration).toBe(25);
+        expect(state.remainingDuration).toBe(25*60);
+        expect(state.initialDuration).toBe(25*60);
     });
 
     it('should change the current state', () => {
@@ -38,11 +38,11 @@ describe('Pomodoro Store', () => {
 
     it('should update the elapsed time', () => {
 
-        expect(usePomodoroStore.getState().elapsedTime).toBeCloseTo(0);
+        expect(usePomodoroStore.getState().remainingDuration).toBeCloseTo(25*60);
         act(() => {
-            usePomodoroStore.getState().setElapsedTime(30);
+            usePomodoroStore.getState().setRemainingDuration(20*60);
         })
-        expect(usePomodoroStore.getState().elapsedTime).toBeCloseTo(30)
+        expect(usePomodoroStore.getState().remainingDuration).toBeCloseTo(20*60)
 
     });
 });
