@@ -2,8 +2,8 @@ import reducer, {
     setCurrentState,
     setIsPaused,
     togglePause,
-    setInitialDuration,
-    setRemainingDuration
+    setInitialDurationInMs,
+    setRemainingDurationInMs
 } from '@/stores/pomodoro-slice';
 
 describe('Pomodoro Slice', () => {
@@ -34,12 +34,12 @@ describe('Pomodoro Slice', () => {
 
     it("should set initial duration", () => {
 
-        const newState = reducer(initialState, setInitialDuration(1800));
+        const newState = reducer(initialState, setInitialDurationInMs(1800));
         expect(newState.initialDuration).toBe(1800);
     });
 
     it("should set remaining duration", () => {
-        const newState = reducer(initialState, setRemainingDuration(900));
+        const newState = reducer(initialState, setRemainingDurationInMs(900));
         expect(newState.remainingDuration).toBe(900);
     });
 });

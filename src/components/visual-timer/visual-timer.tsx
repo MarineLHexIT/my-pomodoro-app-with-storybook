@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 import colors from 'tailwindcss/colors';
-import usePomodoroStore from '@/stores/pomodoro-store.ts';
+
+import { useDispatch } from 'react-redux';
+import {
+    setRemainingDurationInMs
+} from '@/stores/pomodoro-slice'
 
 type ExtractColorNames<T> = {
     [K in keyof T]: T[K] extends Record<string, string> ? K : never;
@@ -10,7 +14,7 @@ export type DisplayTheme = ExtractColorNames<typeof colors>;
 
 interface VisualTimerProps {
     initialTime: number; // Initial Time in SECONDS
-    remainingDuration?: number; // remaining time, in SECONDS
+    remainingDuration?: number; // remaining time, in SECONDS, by default, same as initialDuration
     displayTheme?: DisplayTheme;
     isPaused?: boolean;
 }
@@ -29,10 +33,13 @@ export default function VisualTimer(
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
-    const remainingTimeRef = useRef<number>(remainingDuration!);
+    const remainingTimeRef = useRef<number>(remainingDuration! || initialTime);
     const width = useRef<number>(500);
 
-    const { setRemainingDuration } = usePomodoroStore();
+    const dispatch = useDispatch();
+    const dispatchSetReminingDuration = (remainingDuration: number) => {
+        dispatch(setRemainingDurationInMs(remainingDuration));
+    }
 
     const theme = colors[displayTheme];
 
@@ -182,7 +189,7 @@ export default function VisualTimer(
         remainingTimeRef.current = Math.max(0, remainingTimeRef.current! - deltaTime);
         previousTimeRef.current = now;
 
-        setRemainingDuration(remainingTimeRef.current!);
+        dispatchSetReminingDuration(remainingTimeRef.current!);
         drawCanvas(remainingTimeRef.current);
 
         if ( !isPaused && remainingTimeRef.current! > 0 ) {
@@ -209,7 +216,7 @@ export default function VisualTimer(
                 cancelAnimationFrame(requestRef.current);
             }
         };
-    }, [initialTime, remainingDuration]);
+    }, [initialTime]);
 
     useEffect(() => {
 

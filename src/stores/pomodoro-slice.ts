@@ -5,19 +5,19 @@ type PomodoroState = 'work' | 'break';
 interface PomodoroStoreState {
     currentState: PomodoroState,
     isPaused: boolean,
-    initialDuration: number;
-    remainingDuration: number
+    initialDurationInMs: number;
+    remainingDurationInMs: number
 }
 
 const initialState: PomodoroStoreState = {
     currentState: 'work',
     isPaused: false,
-    initialDuration: 25 * 60,
-    remainingDuration: 25 * 60,
+    initialDurationInMs: 25 * 60 * 1000,
+    remainingDurationInMs: 25 * 60 * 1000,
 };
 
 export const pomodoroSlice = createSlice({
-    name: 'pomodoroState',
+    name: 'pomodoro',
     initialState: initialState satisfies PomodoroStoreState as PomodoroStoreState,
     reducers: {
         setCurrentState: (state, action: PayloadAction<PomodoroState>) => {
@@ -29,11 +29,11 @@ export const pomodoroSlice = createSlice({
         togglePause: (state) => {
             state.isPaused = !state.isPaused;
         },
-        setRemainingDuration: (state, action: PayloadAction<number>) => {
-            state.remainingDuration = action.payload;
+        setRemainingDurationInMs: (state, action: PayloadAction<number>) => {
+            state.remainingDurationInMs = action.payload;
         },
-        setInitialDuration: (state, action: PayloadAction<number>) => {
-            state.initialDuration = action.payload;
+        setInitialDurationInMs: (state, action: PayloadAction<number>) => {
+            state.initialDurationInMs = action.payload;
         }
     }
 });
@@ -42,8 +42,8 @@ export const {
     setCurrentState,
     setIsPaused,
     togglePause,
-    setInitialDuration,
-    setRemainingDuration
+    setInitialDurationInMs,
+    setRemainingDurationInMs
 } = pomodoroSlice.actions;
 
 export default pomodoroSlice.reducer;

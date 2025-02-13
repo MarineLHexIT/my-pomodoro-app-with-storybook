@@ -27,8 +27,8 @@ const usePomodoroStore = create<PomodoroStoreState & PomodoroStoreAction>((set) 
     ...initialState,
     setCurrentState: (newState: PomodoroState) => set(() => ({ currentState: newState })),
     togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
-    setInitialDuration: (initialDuration: number) => set(() => ({ initialDuration })),
-    setRemainingDuration: (remainingDuration: number) => set(() => ({ remainingDuration })),
+    setInitialDurationInMs: (initialDuration: number) => set(() => ({ initialDuration })),
+    setRemainingDurationInMs: (remainingDuration: number) => set(() => ({ remainingDuration })),
 }));
 
 
