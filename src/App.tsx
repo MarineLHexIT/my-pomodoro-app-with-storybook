@@ -1,11 +1,13 @@
+import { Provider } from 'react-redux';
+import store from '@/stores';
+import Clock from '@/components/visual-timer/clock.tsx';
+
 function App() {
 
   return (
-    <>
-        <h1 className="text-3xl font-bold underline">
-            Hello World
-        </h1>
-    </>
+      <Provider store={ store }>
+          <Clock durationInMinutes={25}/>
+      </Provider>
   )
 }
 
