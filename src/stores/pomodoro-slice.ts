@@ -11,7 +11,7 @@ interface PomodoroStoreState {
 
 const initialState: PomodoroStoreState = {
     currentState: 'work',
-    isPaused: false,
+    isPaused: true,
     initialDurationInMs: 25 * 60 * 1000,
     remainingDurationInMs: 25 * 60 * 1000,
 };

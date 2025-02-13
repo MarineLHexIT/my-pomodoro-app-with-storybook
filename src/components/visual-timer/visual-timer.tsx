@@ -185,6 +185,10 @@ export default function VisualTimer(
             previousTimeRef.current = now;
         }
 
+        if (isPaused) {
+            return;
+        }
+
         const deltaTime = now - previousTimeRef.current; // Delta Time in MS
         remainingTimeRef.current = Math.max(0, remainingTimeRef.current! - deltaTime);
         previousTimeRef.current = now;
@@ -192,7 +196,7 @@ export default function VisualTimer(
         dispatchSetReminingDuration(remainingTimeRef.current!);
         drawCanvas(remainingTimeRef.current);
 
-        if ( !isPaused && remainingTimeRef.current! > 0 ) {
+        if ( remainingTimeRef.current! > 0 ) {
             requestRef.current = requestAnimationFrame(animate);
         }
     };
@@ -219,6 +223,8 @@ export default function VisualTimer(
     }, [initialTime]);
 
     useEffect(() => {
+
+        console.log("isPaused", isPaused);
 
         if ( isPaused ) {
             if ( requestRef.current ) {
