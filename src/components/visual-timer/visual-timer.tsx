@@ -5,12 +5,7 @@ import { useDispatch } from 'react-redux';
 import {
     setRemainingDurationInMs
 } from '@/stores/pomodoro-slice'
-
-type ExtractColorNames<T> = {
-    [K in keyof T]: T[K] extends Record<string, string> ? K : never;
-}[keyof T];
-
-export type DisplayTheme = ExtractColorNames<typeof colors>;
+import { DisplayTheme } from '@/shared/types/colors-types.ts';
 
 interface VisualTimerProps {
     initialTime: number; // Initial Time in SECONDS

@@ -20,9 +20,9 @@ My [Chromatic Components Page](https://www.chromatic.com/library?appId=67a47e199
 
 ## Must have
 * [x] Play / Pause buttons 
-* [ ] Display digital timer
-* [ ] Add / Remove time
+* [x] Display digital timer
 * [ ] Work / Break timer
+* [ ] Add / Remove time
 
 # Nice to have
 * [ ] Add Drag&Drop on Visual Timer components

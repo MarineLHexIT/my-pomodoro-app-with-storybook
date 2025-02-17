@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-type PomodoroState = 'work' | 'break';
+import {
+    PomodoroFocusState,
+    PomodoroShortBreakState,
+    PomodoroLongBreakState,
+    PomodoroState,
+    PomodoroStateName
+} from '@/shared/types/pomodoro-types.ts';
 
 interface PomodoroStoreState {
     currentState: PomodoroState,
@@ -10,7 +15,7 @@ interface PomodoroStoreState {
 }
 
 const initialState: PomodoroStoreState = {
-    currentState: 'work',
+    currentState: PomodoroFocusState,
     isPaused: true,
     initialDurationInMs: 25 * 60 * 1000,
     remainingDurationInMs: 25 * 60 * 1000,
@@ -20,8 +25,21 @@ export const pomodoroSlice = createSlice({
     name: 'pomodoro',
     initialState: initialState satisfies PomodoroStoreState as PomodoroStoreState,
     reducers: {
-        setCurrentState: (state, action: PayloadAction<PomodoroState>) => {
-            state.currentState = action.payload;
+        setCurrentState: (state, action: PayloadAction<PomodoroStateName>) => {
+            switch(action.payload) {
+                case "focus":
+                    state.currentState = PomodoroFocusState;
+                    break;
+                case "short break":
+                    state.currentState = PomodoroShortBreakState;
+                    break;
+                case "long break":
+                    state.currentState = PomodoroLongBreakState;
+                    break;
+                default:
+                    throw new Error("Unknown action type");
+
+            }
         },
         setIsPaused: (state, action: PayloadAction<boolean>) => {
             state.isPaused = action.payload;
