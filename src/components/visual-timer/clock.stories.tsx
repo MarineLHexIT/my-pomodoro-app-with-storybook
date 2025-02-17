@@ -2,24 +2,11 @@ import { Meta, StoryObj } from '@storybook/react';
 import Clock from "./clock";
 import { MockedStore } from '@/stores/mocked-store';
 import { userEvent, within } from '@storybook/test';
+import { pomodoroFocusState, pomodoroShortBreakState } from '@/shared/types/pomodoro-types.ts';
 
 const meta = {
     title: 'Pomodoro/Pages/Clock',
-    component: Clock,
-    decorators: [
-        (Story) => (
-            <MockedStore
-                initialState={ {
-                    pomodoro: {
-                        initialDurationInMs: 25 * 60 * 1000,
-                        remainingDurationInMs: 25 * 60 * 1000,
-                        isPaused: true,
-                        currentState: 'work' as const
-                    },
-                } }
-            ><Story/></MockedStore>
-        )
-    ]
+    component: Clock
 } satisfies Meta<typeof Clock>;
 
 export default meta;
@@ -30,7 +17,20 @@ export const Default: Story = {
     name: 'Work Clock',
     args: {
         durationInMinutes: 25
-    }
+    },
+    decorators: [
+        (Story) => (
+            <MockedStore
+                initialState={ {
+                    pomodoro: {
+                        remainingDurationInMs: pomodoroFocusState.durationInMinutes * 60 * 1000,
+                        isPaused: true,
+                        currentState: pomodoroFocusState
+                    },
+                } }
+            ><Story/></MockedStore>
+        )
+    ]
 };
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -40,6 +40,19 @@ export const StartedClock: Story = {
     args: {
         durationInMinutes: 25,
     },
+    decorators: [
+        (Story) => (
+            <MockedStore
+                initialState={ {
+                    pomodoro: {
+                        remainingDurationInMs: pomodoroFocusState.durationInMinutes * 60 * 1000,
+                        isPaused: true,
+                        currentState: pomodoroFocusState
+                    },
+                } }
+            ><Story/></MockedStore>
+        )
+    ],
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
 
@@ -58,5 +71,18 @@ export const BreakClock: Story = {
     args: {
         ...Default.args,
         durationInMinutes: 5
-    }
+    },
+    decorators: [
+        (Story) => (
+            <MockedStore
+                initialState={ {
+                    pomodoro: {
+                        remainingDurationInMs: pomodoroShortBreakState.durationInMinutes * 60 * 1000,
+                        isPaused: true,
+                        currentState: pomodoroShortBreakState
+                    },
+                } }
+            ><Story/></MockedStore>
+        )
+    ]
 }

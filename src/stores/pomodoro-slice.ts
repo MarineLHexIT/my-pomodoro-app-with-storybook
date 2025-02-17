@@ -1,24 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-    PomodoroFocusState,
-    PomodoroShortBreakState,
-    PomodoroLongBreakState,
+    pomodoroFocusState,
+    pomodoroStates,
     PomodoroState,
-    PomodoroStateName
-} from '@/shared/types/pomodoro-types.ts';
+    PomodoroStateName,
+} from '@/shared/types/pomodoro-types';
 
 interface PomodoroStoreState {
     currentState: PomodoroState,
     isPaused: boolean,
-    initialDurationInMs: number;
     remainingDurationInMs: number
 }
 
 const initialState: PomodoroStoreState = {
-    currentState: PomodoroFocusState,
+    currentState: pomodoroFocusState,
     isPaused: true,
-    initialDurationInMs: 25 * 60 * 1000,
-    remainingDurationInMs: 25 * 60 * 1000,
+    remainingDurationInMs: pomodoroFocusState.durationInMinutes * 60 * 1000,
 };
 
 export const pomodoroSlice = createSlice({
@@ -26,20 +23,8 @@ export const pomodoroSlice = createSlice({
     initialState: initialState satisfies PomodoroStoreState as PomodoroStoreState,
     reducers: {
         setCurrentState: (state, action: PayloadAction<PomodoroStateName>) => {
-            switch(action.payload) {
-                case "focus":
-                    state.currentState = PomodoroFocusState;
-                    break;
-                case "short break":
-                    state.currentState = PomodoroShortBreakState;
-                    break;
-                case "long break":
-                    state.currentState = PomodoroLongBreakState;
-                    break;
-                default:
-                    throw new Error("Unknown action type");
-
-            }
+            state.currentState = pomodoroStates[action.payload];
+            state.remainingDurationInMs = state.currentState.durationInMinutes * 60 * 1000;
         },
         setIsPaused: (state, action: PayloadAction<boolean>) => {
             state.isPaused = action.payload;
@@ -50,9 +35,6 @@ export const pomodoroSlice = createSlice({
         setRemainingDurationInMs: (state, action: PayloadAction<number>) => {
             state.remainingDurationInMs = action.payload;
         },
-        setInitialDurationInMs: (state, action: PayloadAction<number>) => {
-            state.initialDurationInMs = action.payload;
-        }
     }
 });
 
@@ -60,7 +42,6 @@ export const {
     setCurrentState,
     setIsPaused,
     togglePause,
-    setInitialDurationInMs,
     setRemainingDurationInMs
 } = pomodoroSlice.actions;
 

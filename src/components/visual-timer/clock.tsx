@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import VisualTimer from '@/components/visual-timer/visual-timer.tsx';
 import StartButton from '@/components/buttons/start-button.tsx';
 import PauseButton from '@/components/buttons/pause-button.tsx';
@@ -10,41 +9,29 @@ import DigitalTimer from '@/components/digital-timer/digital-timer.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/stores';
 import {
-    togglePause, setRemainingDurationInMs
+    togglePause
 } from '@/stores/pomodoro-slice';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-interface ClockProps {
-    durationInMinutes: number;
-}
-
-export default function Clock({ durationInMinutes }: ClockProps) {
+export default function Clock() {
 
     const dispatch = useDispatch();
-    const { isPaused, remainingDurationInMs } = useSelector(
+    const { currentState, isPaused, remainingDurationInMs } = useSelector(
         (state: RootState) => state.pomodoro
     );
-
-    const dispatchRemainingDuration = (durationInMinutes: number) => {
-        dispatch(setRemainingDurationInMs(durationInMinutes * 60 * 1000));
-    };
 
     const dispatchTogglePause = () => {
         dispatch(togglePause());
     };
-
-    useEffect(() => {
-        dispatchRemainingDuration(durationInMinutes);
-    }, [durationInMinutes]);
 
     return (
         <div className="flex flex-col gap-2 items-center size-[500px]">
             <div className="grid place-items-center">
                 <div className="col-start-1 row-start-1 w-full h-full">
                     <VisualTimer
-                        initialTime={ durationInMinutes * 60 }
+                        initialTime={ currentState.durationInMinutes * 60 }
                         remainingDuration={ remainingDurationInMs / 1000 }
                         isPaused={ isPaused }
                     />
