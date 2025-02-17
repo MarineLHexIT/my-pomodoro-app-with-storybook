@@ -86,3 +86,23 @@ export const BreakClock: Story = {
         )
     ]
 }
+
+export const AlmostEndClock: Story = {
+    args: {
+        ...Default.args,
+        durationInMinutes: 5
+    },
+    decorators: [
+        (Story) => (
+            <MockedStore
+                initialState={ {
+                    pomodoro: {
+                        remainingDurationInMs: 15 * 1000,
+                        isPaused: false,
+                        currentState: pomodoroShortBreakState
+                    },
+                } }
+            ><Story/></MockedStore>
+        )
+    ]
+}
