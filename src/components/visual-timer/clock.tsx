@@ -35,7 +35,6 @@ export default function Clock({ durationInMinutes }: ClockProps) {
         dispatch(togglePause());
     };
 
-
     useEffect(() => {
         dispatchRemainingDuration(durationInMinutes);
     }, [durationInMinutes]);

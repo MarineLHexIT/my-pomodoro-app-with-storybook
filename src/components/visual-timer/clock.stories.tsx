@@ -10,8 +10,8 @@ const meta = {
             <MockedStore
                 initialState={ {
                     pomodoro: {
-                        initialDuration: 25*60,
-                        remainingDuration: 25 * 60,
+                        initialDurationInMs: 25 * 60 * 1000,
+                        remainingDurationInMs: 25 * 60 * 1000,
                         isPaused: false,
                         currentState: 'work' as const
                     },
