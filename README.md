@@ -27,3 +27,7 @@ My [Chromatic Components Page](https://www.chromatic.com/library?appId=67a47e199
 # Nice to have
 * [ ] Add Drag&Drop on Visual Timer components
 * [ ] Little sound at the end of a timer
+
+# Added in the same time
+* [x] CI/CD with Jest and Chromatic
+* [x] React Redux

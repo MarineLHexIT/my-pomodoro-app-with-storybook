@@ -33,6 +33,7 @@ export default function Clock() {
                     <VisualTimer
                         initialTime={ currentState.durationInMinutes * 60 }
                         remainingDuration={ remainingDurationInMs / 1000 }
+                        displayTheme={ currentState.theme }
                         isPaused={ isPaused }
                     />
                 </div>
