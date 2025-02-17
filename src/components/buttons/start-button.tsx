@@ -9,7 +9,7 @@ interface StartButtonProps {
 
 export default function StartButton({ onClick, disabled = false }: StartButtonProps) {
 
-    return <Button onClick={ onClick } disabled={ disabled }>
+    return <Button onClick={ onClick } disabled={ disabled } data-testId="start-button">
         <PlayIcon className={ clsx('size-6') }/>
     </Button>;
 }
