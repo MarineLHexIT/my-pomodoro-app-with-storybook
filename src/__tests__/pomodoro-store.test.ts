@@ -1,47 +1,45 @@
-import { act } from 'react';
-import '@testing-library/jest-dom';
+import reducer, {
+    setCurrentState,
+    setIsPaused,
+    togglePause,
+    setInitialDurationInMs,
+    setRemainingDurationInMs
+} from '@/stores/pomodoro-slice';
 
-import usePomodoroStore from '@/stores/pomodoro-store';
+describe('Pomodoro Slice', () => {
 
-afterEach(() => {
-    usePomodoroStore.setState({
-        elapsedTime: 0,
+    const initialDuration = 25*60;
+    const initialState = {
+        currentState: "work" as const,
         isPaused: false,
-        currentState: 'work'
+        initialDuration,
+        remainingDuration: initialDuration,
+    };
+
+    it('should set the current state', () => {
+
+        const newState = reducer(initialState, setCurrentState("break"));
+        expect(newState.currentState).toBe("break");
+    });
+
+    it("should set isPaused", () => {
+        const newState = reducer(initialState, setIsPaused(true));
+        expect(newState.isPaused).toBe(true);
+    });
+
+    it("should toggle pause", () => {
+        const newState = reducer(initialState, togglePause());
+        expect(newState.isPaused).toBe(true);
+    });
+
+    it("should set initial duration", () => {
+
+        const newState = reducer(initialState, setInitialDurationInMs(1800));
+        expect(newState.initialDuration).toBe(1800);
+    });
+
+    it("should set remaining duration", () => {
+        const newState = reducer(initialState, setRemainingDurationInMs(900));
+        expect(newState.remainingDuration).toBe(900);
     });
 });
-
-describe('Pomodoro Store', () => {
-    it('Initial state should be { currentState: work, isPaused: false, elapsedTime: 0}', async () => {
-        const state = usePomodoroStore.getState();
-        expect(state.currentState).toBe('work');
-        expect(state.isPaused).toBe(false);
-        expect(state.elapsedTime).toBe(0);
-    });
-
-    it('should change the current state', () => {
-        act(() => {
-            usePomodoroStore.getState().setCurrentState('break');
-        });
-        expect(usePomodoroStore.getState().currentState).toBe('break');
-    });
-
-    it('should toggle the paused state', () => {
-        expect(usePomodoroStore.getState().isPaused).toBe(false);
-        act(() => {
-            usePomodoroStore.getState().togglePause();
-        });
-        expect(usePomodoroStore.getState().isPaused).toBe(true);
-    });
-
-    it('should update the elapsed time', () => {
-
-        expect(usePomodoroStore.getState().elapsedTime).toBeCloseTo(0);
-        act(() => {
-            usePomodoroStore.getState().setElapsedTime(30);
-        })
-        expect(usePomodoroStore.getState().elapsedTime).toBeCloseTo(30)
-
-    });
-});
-

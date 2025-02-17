@@ -9,7 +9,7 @@ interface PauseButtonProps {
 
 export default function PauseButton({ onClick, disabled = false }: PauseButtonProps) {
 
-    return <Button onClick={ onClick } disabled={ disabled }>
+    return <Button onClick={ onClick } disabled={ disabled } data-testId="pause-button">
         <PauseIcon className={ clsx('size-6') }/>
     </Button>;
 }

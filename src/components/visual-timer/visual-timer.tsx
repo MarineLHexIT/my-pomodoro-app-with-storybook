@@ -1,6 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import colors from 'tailwindcss/colors';
-import usePomodoroStore from '@/stores/pomodoro-store.ts';
+
+import { useDispatch } from 'react-redux';
+import {
+    setRemainingDurationInMs
+} from '@/stores/pomodoro-slice'
 
 type ExtractColorNames<T> = {
     [K in keyof T]: T[K] extends Record<string, string> ? K : never;
@@ -9,31 +13,41 @@ type ExtractColorNames<T> = {
 export type DisplayTheme = ExtractColorNames<typeof colors>;
 
 interface VisualTimerProps {
-    initialTime: number; // Initial Time in MINUTES
+    initialTime: number; // Initial Time in SECONDS
+    remainingDuration?: number; // remaining time, in SECONDS, by default, same as initialDuration
     displayTheme?: DisplayTheme;
+    isPaused?: boolean;
 }
 
 const MAX_TIMER = 60 * 60 * 1000; // 1h en millisecondes
 
 export default function VisualTimer(
     {
-        initialTime = 25,
-        displayTheme = 'amber'
+        initialTime = 25 * 60,
+        remainingDuration,
+        displayTheme = 'amber',
+        isPaused = false,
     }: VisualTimerProps
 ) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
-    const remainingTimeRef = useRef<number>();
+    const remainingTimeRef = useRef<number>(remainingDuration! || initialTime);
+    const width = useRef<number>(500);
 
-    const { isPaused, setElapsedTime } = usePomodoroStore.getState();
-
-    const [width, setWidth] = useState<number>();
+    const dispatch = useDispatch();
+    const dispatchSetReminingDuration = (remainingDuration: number) => {
+        dispatch(setRemainingDurationInMs(remainingDuration));
+    }
 
     const theme = colors[displayTheme];
 
-    const initialTimeInMs = initialTime * 60 * 1000;
+    const initialTimeInMs = initialTime * 1000;
+    if ( canvasRef.current ) {
+        const rect = canvasRef.current.parentElement?.getBoundingClientRect();
+        width.current = Math.min(rect!.width, rect!.height);
+    }
 
     const drawTimer = (
         ctx: CanvasRenderingContext2D,
@@ -167,43 +181,35 @@ export default function VisualTimer(
 
         const now = performance.now();
 
-        if (isPaused) {
-            return;
-        }
-
         if ( previousTimeRef.current === undefined ) {
             previousTimeRef.current = now;
+        }
+
+        if (isPaused) {
+            return;
         }
 
         const deltaTime = now - previousTimeRef.current; // Delta Time in MS
         remainingTimeRef.current = Math.max(0, remainingTimeRef.current! - deltaTime);
         previousTimeRef.current = now;
 
-        setElapsedTime(initialTimeInMs - remainingTimeRef.current!);
+        dispatchSetReminingDuration(remainingTimeRef.current!);
         drawCanvas(remainingTimeRef.current);
 
-        if (remainingTimeRef.current! > 0) {
+        if ( remainingTimeRef.current! > 0 ) {
             requestRef.current = requestAnimationFrame(animate);
         }
     };
 
-
     useEffect(() => {
 
-        // get width / height of the parent
-        if (canvasRef.current) {
-            const rect = canvasRef.current.parentElement?.getBoundingClientRect();
-            setWidth(Math.min(rect!.width, rect!.height));
-        }
+        // init refs
+        previousTimeRef.current = performance.now();
+        remainingTimeRef.current = remainingDuration! * 1000 || initialTimeInMs;
 
         // Initial Drawing
         drawCanvas(initialTimeInMs);
 
-        // init refs
-        previousTimeRef.current = performance.now();
-        remainingTimeRef.current = initialTimeInMs;
-
-        // start animate
         if ( !isPaused ) {
             requestRef.current = requestAnimationFrame(animate);
         }
@@ -217,6 +223,8 @@ export default function VisualTimer(
     }, [initialTime]);
 
     useEffect(() => {
+
+        console.log("isPaused", isPaused);
 
         if ( isPaused ) {
             if ( requestRef.current ) {
@@ -234,5 +242,5 @@ export default function VisualTimer(
         }
     }, [isPaused])
 
-    return <canvas ref={ canvasRef } width={ width } height={ width }/>;
+    return <canvas ref={ canvasRef } width={ width.current } height={ width.current } className="w-full h-full"/>;
 }
