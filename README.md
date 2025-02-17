@@ -21,7 +21,8 @@ My [Chromatic Components Page](https://www.chromatic.com/library?appId=67a47e199
 ## Must have
 * [x] Play / Pause buttons 
 * [x] Display digital timer
-* [ ] Work / Break timer
+* [x] Work / Break timer
+* [ ] Change timer
 * [ ] Add / Remove time
 
 # Nice to have

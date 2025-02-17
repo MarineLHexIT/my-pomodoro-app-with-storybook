@@ -9,10 +9,12 @@ import DigitalTimer from '@/components/digital-timer/digital-timer.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/stores';
 import {
-    togglePause
+    togglePause,
+    setCurrentState, setIsPaused
 } from '@/stores/pomodoro-slice';
 import { clsx } from 'clsx';
 import { useEffect } from 'react';
+import { pomodoroFocusState, pomodoroShortBreakState } from '@/shared/types/pomodoro-types.ts';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -31,6 +33,17 @@ export default function Clock() {
     useEffect(() => {
         console.table(currentState);
     }, [currentState]);
+
+    useEffect(() => {
+        if ( remainingDurationInMs === 0 && !isPaused ) {
+            dispatch(setCurrentState(
+                currentState.name === pomodoroFocusState.name ?
+                    pomodoroShortBreakState.name :
+                    pomodoroFocusState.name
+            ));
+            dispatch(setIsPaused(false));
+        }
+    }, [remainingDurationInMs, isPaused]);
 
     return (
         <div className="flex flex-col gap-2 items-center size-[500px]">
