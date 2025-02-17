@@ -11,6 +11,8 @@ import { RootState } from '@/stores';
 import {
     togglePause
 } from '@/stores/pomodoro-slice';
+import { clsx } from 'clsx';
+import { useEffect } from 'react';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -26,6 +28,10 @@ export default function Clock() {
         dispatch(togglePause());
     };
 
+    useEffect(() => {
+        console.table(currentState);
+    }, [currentState]);
+
     return (
         <div className="flex flex-col gap-2 items-center size-[500px]">
             <div className="grid place-items-center">
@@ -39,14 +45,18 @@ export default function Clock() {
                 </div>
                 <div className="col-start-1 row-start-1">
                     {
-                        isPaused && <StartButton onClick={ dispatchTogglePause }/>
+                        isPaused && <StartButton onClick={ dispatchTogglePause } theme={ currentState.theme }/>
                     }
                     {
-                        !isPaused && <PauseButton onClick={ dispatchTogglePause }/>
+                        !isPaused && <PauseButton onClick={ dispatchTogglePause } theme={ currentState.theme }/>
                     }
                 </div>
             </div>
-            <DigitalTimer currentTime={ remainingDurationInMs } className="text-amber-600"/>
+            <DigitalTimer currentTime={ remainingDurationInMs } className={ clsx({
+                'text-amber-600': currentState.theme == 'amber',
+                'text-sky-600': currentState.theme == 'sky',
+                'text-indigo-600': currentState.theme == 'indigo',
+            }) }/>
         </div>
     );
 }
