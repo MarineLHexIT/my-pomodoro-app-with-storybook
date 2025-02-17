@@ -46,7 +46,7 @@ export const StartedClock: Story = {
         const startButton = canvas.getByTestId("start-button");
         await userEvent.click(startButton);
 
-        await sleep(15*1000); // attendre 15 secondes
+        await sleep(5*1000); // attendre 15 secondes
 
         const pauseButton = canvas.getByTestId("pause-button");
         await userEvent.click(pauseButton);
