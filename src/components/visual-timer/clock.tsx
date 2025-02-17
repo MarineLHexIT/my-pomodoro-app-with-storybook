@@ -40,25 +40,25 @@ export default function Clock({ durationInMinutes }: ClockProps) {
     }, [durationInMinutes]);
 
     return (
-        <div className="flex flex-col gap-2">
-        <div className="grid w-[500px] h-[500px] place-items-center">
-            <div className="col-start-1 row-start-1 w-full h-full">
-                <VisualTimer
-                    initialTime={ durationInMinutes * 60 }
-                    remainingDuration={ remainingDurationInMs / 1000 }
-                    isPaused={ isPaused }
-                />
+        <div className="flex flex-col gap-2 items-center size-[500px]">
+            <div className="grid place-items-center">
+                <div className="col-start-1 row-start-1 w-full h-full">
+                    <VisualTimer
+                        initialTime={ durationInMinutes * 60 }
+                        remainingDuration={ remainingDurationInMs / 1000 }
+                        isPaused={ isPaused }
+                    />
+                </div>
+                <div className="col-start-1 row-start-1">
+                    {
+                        isPaused && <StartButton onClick={ dispatchTogglePause }/>
+                    }
+                    {
+                        !isPaused && <PauseButton onClick={ dispatchTogglePause }/>
+                    }
+                </div>
             </div>
-            <div className="col-start-1 row-start-1">
-                {
-                    isPaused && <StartButton onClick={ dispatchTogglePause }/>
-                }
-                {
-                    !isPaused && <PauseButton onClick={ dispatchTogglePause }/>
-                }
-            </div>
-        </div>
-            <DigitalTimer currentTime={ remainingDurationInMs }/>
+            <DigitalTimer currentTime={ remainingDurationInMs } className="text-amber-600"/>
         </div>
     );
 }
