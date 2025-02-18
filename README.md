@@ -22,7 +22,7 @@ My [Chromatic Components Page](https://www.chromatic.com/library?appId=67a47e199
 * [x] Play / Pause buttons 
 * [x] Display digital timer
 * [x] Work / Break timer
-* [ ] Change timer
+* [x] Change timer
 * [ ] Add / Remove time
 
 # Nice to have

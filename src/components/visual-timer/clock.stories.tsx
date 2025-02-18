@@ -25,7 +25,8 @@ export const Default: Story = {
                     pomodoro: {
                         remainingDurationInMs: pomodoroFocusState.durationInMinutes * 60 * 1000,
                         isPaused: true,
-                        currentState: pomodoroFocusState
+                        currentState: pomodoroFocusState,
+                        history: []
                     },
                 } }
             ><Story/></MockedStore>
@@ -47,7 +48,8 @@ export const StartedClock: Story = {
                     pomodoro: {
                         remainingDurationInMs: pomodoroFocusState.durationInMinutes * 60 * 1000,
                         isPaused: true,
-                        currentState: pomodoroFocusState
+                        currentState: pomodoroFocusState,
+                        history: []
                     },
                 } }
             ><Story/></MockedStore>
@@ -79,7 +81,8 @@ export const BreakClock: Story = {
                     pomodoro: {
                         remainingDurationInMs: pomodoroShortBreakState.durationInMinutes * 60 * 1000,
                         isPaused: true,
-                        currentState: pomodoroShortBreakState
+                        currentState: pomodoroShortBreakState,
+                        history: []
                     },
                 } }
             ><Story/></MockedStore>
@@ -99,7 +102,8 @@ export const AlmostEndClock: Story = {
                     pomodoro: {
                         remainingDurationInMs: 15 * 1000,
                         isPaused: false,
-                        currentState: pomodoroShortBreakState
+                        currentState: pomodoroShortBreakState,
+                        history: []
                     },
                 } }
             ><Story/></MockedStore>

@@ -3,19 +3,27 @@ import {
     pomodoroFocusState,
     pomodoroStates,
     PomodoroState,
-    PomodoroStateName,
+    PomodoroStateName, pomodoroLongBreakState, pomodoroShortBreakState,
 } from '@/shared/types/pomodoro-types';
 
 interface PomodoroStoreState {
     currentState: PomodoroState,
     isPaused: boolean,
-    remainingDurationInMs: number
+    remainingDurationInMs: number,
+    history: PomodoroState[]
 }
 
 const initialState: PomodoroStoreState = {
     currentState: pomodoroFocusState,
     isPaused: true,
     remainingDurationInMs: pomodoroFocusState.durationInMinutes * 60 * 1000,
+    history: []
+};
+
+const updateState = (state: PomodoroStoreState, newState: PomodoroState) => {
+    state.history.push(state.currentState);
+    state.currentState = newState;
+    state.remainingDurationInMs = newState.durationInMinutes * 60 * 1000;
 };
 
 export const pomodoroSlice = createSlice({
@@ -23,8 +31,7 @@ export const pomodoroSlice = createSlice({
     initialState: initialState satisfies PomodoroStoreState as PomodoroStoreState,
     reducers: {
         setCurrentState: (state, action: PayloadAction<PomodoroStateName>) => {
-            state.currentState = pomodoroStates[action.payload];
-            state.remainingDurationInMs = state.currentState.durationInMinutes * 60 * 1000;
+            updateState(state, pomodoroStates[action.payload as string]);
         },
         setIsPaused: (state, action: PayloadAction<boolean>) => {
             state.isPaused = action.payload;
@@ -35,6 +42,26 @@ export const pomodoroSlice = createSlice({
         setRemainingDurationInMs: (state, action: PayloadAction<number>) => {
             state.remainingDurationInMs = action.payload;
         },
+        resetHistory: (state) => {
+            state.history = [];
+        },
+        nextState: (state) => {
+
+            let nextState: PomodoroState;
+
+            if ( state.currentState.name !== pomodoroFocusState.name ) {
+                nextState = pomodoroFocusState;
+            } else {
+                if (
+                    state.history.filter((historyState: PomodoroState) => historyState.name === pomodoroFocusState.name).length % 4 === 3
+                ) {
+                    nextState = pomodoroLongBreakState;
+                } else {
+                    nextState = pomodoroShortBreakState;
+                }
+            }
+            updateState(state, nextState);
+        }
     }
 });
 
@@ -42,7 +69,9 @@ export const {
     setCurrentState,
     setIsPaused,
     togglePause,
-    setRemainingDurationInMs
+    setRemainingDurationInMs,
+    resetHistory,
+    nextState,
 } = pomodoroSlice.actions;
 
 export default pomodoroSlice.reducer;

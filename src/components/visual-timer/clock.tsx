@@ -10,11 +10,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/stores';
 import {
     togglePause,
-    setCurrentState, setIsPaused
+    setIsPaused, nextState
 } from '@/stores/pomodoro-slice';
 import { clsx } from 'clsx';
 import { useEffect } from 'react';
-import { pomodoroFocusState, pomodoroShortBreakState } from '@/shared/types/pomodoro-types.ts';
+import Button from '@/components/buttons/button.tsx';
+import { ForwardIcon } from '@heroicons/react/24/solid';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -30,17 +31,13 @@ export default function Clock() {
         dispatch(togglePause());
     };
 
-    useEffect(() => {
-        console.table(currentState);
-    }, [currentState]);
+    const dispatchNextState = () => {
+        dispatch(nextState());
+    };
 
     useEffect(() => {
         if ( remainingDurationInMs === 0 && !isPaused ) {
-            dispatch(setCurrentState(
-                currentState.name === pomodoroFocusState.name ?
-                    pomodoroShortBreakState.name :
-                    pomodoroFocusState.name
-            ));
+            dispatchNextState();
             dispatch(setIsPaused(false));
         }
     }, [remainingDurationInMs, isPaused]);
@@ -65,11 +62,19 @@ export default function Clock() {
                     }
                 </div>
             </div>
-            <DigitalTimer currentTime={ remainingDurationInMs } className={ clsx({
-                'text-amber-600': currentState.theme == 'amber',
-                'text-sky-600': currentState.theme == 'sky',
-                'text-indigo-600': currentState.theme == 'indigo',
-            }) }/>
+            <div className="flex flex-row gap-2">
+                <DigitalTimer currentTime={ remainingDurationInMs } className={ clsx({
+                    'text-amber-600': currentState.theme == 'amber',
+                    'text-sky-600': currentState.theme == 'sky',
+                    'text-indigo-600': currentState.theme == 'indigo',
+                }) }/>
+            </div>
+            <Button
+                theme={ currentState.theme }
+                onClick={ dispatchNextState }
+                aria-label={ 'Next state' }>
+                <ForwardIcon className={ clsx('size-6') }/>
+            </Button>
         </div>
     );
 }

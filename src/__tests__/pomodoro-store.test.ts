@@ -2,10 +2,10 @@ import reducer, {
     setCurrentState,
     setIsPaused,
     togglePause,
-    setRemainingDurationInMs
+    setRemainingDurationInMs, nextState, resetHistory
 } from '@/stores/pomodoro-slice';
 import { RootState } from '@/stores';
-import { pomodoroFocusState, pomodoroShortBreakState } from '@/shared/types/pomodoro-types';
+import { pomodoroFocusState, pomodoroLongBreakState, pomodoroShortBreakState } from '@/shared/types/pomodoro-types';
 
 describe('Pomodoro Slice', () => {
 
@@ -15,6 +15,7 @@ describe('Pomodoro Slice', () => {
             currentState: pomodoroFocusState,
             isPaused: false,
             remainingDurationInMs: initialDuration,
+            history: []
         }
     };
 
@@ -36,5 +37,50 @@ describe('Pomodoro Slice', () => {
     it("should set remaining duration", () => {
         const newState = reducer(initialState.pomodoro, setRemainingDurationInMs(900));
         expect(newState.remainingDurationInMs).toBe(900);
+    });
+
+    it('should build history', () => {
+        let newState = reducer(initialState.pomodoro, setCurrentState('short break'));
+        newState = reducer(newState, setCurrentState('focus'));
+        newState = reducer(newState, setCurrentState('short break'));
+        newState = reducer(newState, setCurrentState('focus'));
+        newState = reducer(newState, setCurrentState('long break'));
+
+        expect(newState.history.length).toBe(5);
+        expect(newState.history.at(-1)).toBe(pomodoroFocusState);
+        expect(newState.currentState).toBe(pomodoroLongBreakState);
+    });
+
+    it('should create new state according to logic', () => {
+
+        let newState = reducer(initialState.pomodoro, resetHistory()); // focus
+
+        newState = reducer(newState, nextState()); // short break
+        expect(newState.history.at(-1)).toBe(pomodoroFocusState);
+        expect(newState.currentState).toBe(pomodoroShortBreakState);
+
+        newState = reducer(newState, nextState()); // focus
+        expect(newState.history.at(-1)).toBe(pomodoroShortBreakState);
+        expect(newState.currentState).toBe(pomodoroFocusState);
+
+        newState = reducer(newState, nextState()); // short break
+        expect(newState.history.at(-1)).toBe(pomodoroFocusState);
+        expect(newState.currentState).toBe(pomodoroShortBreakState);
+
+        newState = reducer(newState, nextState()); // focus
+        expect(newState.history.at(-1)).toBe(pomodoroShortBreakState);
+        expect(newState.currentState).toBe(pomodoroFocusState);
+
+        newState = reducer(newState, nextState()); // short break
+        expect(newState.history.at(-1)).toBe(pomodoroFocusState);
+        expect(newState.currentState).toBe(pomodoroShortBreakState);
+
+        newState = reducer(newState, nextState()); // focus
+        expect(newState.history.at(-1)).toBe(pomodoroShortBreakState);
+        expect(newState.currentState).toBe(pomodoroFocusState);
+
+        newState = reducer(newState, nextState()); // long break
+        expect(newState.history.at(-1)).toBe(pomodoroFocusState);
+        expect(newState.currentState).toBe(pomodoroLongBreakState);
     });
 });
